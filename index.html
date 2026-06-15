@@ -18,9 +18,7 @@
     --line:#DDD4C2;
     --card:#FFFFFF;
   }
-
   *{box-sizing:border-box;}
-
   body{
     margin:0;
     background:var(--paper);
@@ -28,17 +26,12 @@
     font-family:'IBM Plex Sans', sans-serif;
     -webkit-font-smoothing:antialiased;
   }
-
   .wrap{
     max-width:880px;
     margin:0 auto;
     padding:48px 24px 80px;
   }
-
-  /* Header */
-  header{
-    margin-bottom:36px;
-  }
+  header{margin-bottom:36px;}
   .eyebrow{
     font-family:'IBM Plex Mono', monospace;
     font-size:12px;
@@ -50,7 +43,7 @@
   h1{
     font-family:'Fraunces', serif;
     font-weight:600;
-    font-size:clamp(28px, 5vw, 42px);
+    font-size:clamp(26px, 5vw, 40px);
     line-height:1.15;
     margin:0 0 12px;
     letter-spacing:-0.01em;
@@ -58,15 +51,13 @@
   .lede{
     font-size:15px;
     color:var(--ink-soft);
-    max-width:560px;
+    max-width:580px;
     line-height:1.6;
     margin:0;
   }
-
-  /* Stat row */
   .stats{
     display:grid;
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(4,1fr);
     gap:1px;
     background:var(--line);
     border:1px solid var(--line);
@@ -76,11 +67,11 @@
   }
   .stat{
     background:var(--card);
-    padding:18px 16px;
+    padding:16px 14px;
   }
   .stat .label{
     font-family:'IBM Plex Mono', monospace;
-    font-size:11px;
+    font-size:10px;
     letter-spacing:.08em;
     text-transform:uppercase;
     color:var(--ink-soft);
@@ -88,46 +79,33 @@
   }
   .stat .value{
     font-family:'Fraunces', serif;
-    font-size:22px;
+    font-size:20px;
     font-weight:600;
     margin:0;
   }
   .stat .value.brass{color:var(--brass);}
   .stat .value.rise{color:var(--rise);}
   .stat .value.fall{color:var(--fall);}
-  .stat .sub{
-    font-size:12px;
-    color:var(--ink-soft);
-    margin:4px 0 0;
-  }
-
-  /* Timeline + ticker layout */
+  .stat .value.pending{color:var(--ink-soft);}
+  .stat .sub{font-size:11px;color:var(--ink-soft);margin:4px 0 0;}
   .board{
     display:grid;
     grid-template-columns:64px 1fr;
     gap:0 20px;
   }
-
-  .ticker-col{
-    position:relative;
-  }
+  .ticker-col{position:relative;}
   .ticker-col svg{
     position:sticky;
     top:24px;
     width:100%;
     height:100%;
   }
-
-  .events{
-    border-left:1px solid var(--line);
-  }
-
+  .events{border-left:1px solid var(--line);}
   .event{
     position:relative;
     padding:0 0 30px 28px;
   }
   .event:last-child{padding-bottom:0;}
-
   .event::before{
     content:'';
     position:absolute;
@@ -139,19 +117,10 @@
     background:var(--card);
     border:2px solid var(--ink-soft);
   }
-  .event.key::before{
-    border-color:var(--brass);
-    background:var(--brass);
-  }
-  .event.alert::before{
-    border-color:var(--rise);
-    background:var(--rise);
-  }
-  .event.relief::before{
-    border-color:var(--fall);
-    background:var(--fall);
-  }
-
+  .event.key::before{border-color:var(--brass);background:var(--brass);}
+  .event.alert::before{border-color:var(--rise);background:var(--rise);}
+  .event.relief::before{border-color:var(--fall);background:var(--fall);}
+  .event.pending::before{border-color:var(--ink-soft);background:var(--paper);border-style:dashed;}
   .event .date{
     font-family:'IBM Plex Mono', monospace;
     font-size:12px;
@@ -182,42 +151,30 @@
     margin-bottom:8px;
     letter-spacing:.04em;
   }
-  .tag.rise{background:rgba(178,88,74,.12); color:var(--rise);}
-  .tag.fall{background:rgba(94,140,112,.12); color:var(--fall);}
-  .tag.neutral{background:rgba(192,144,46,.12); color:var(--brass);}
-
-  /* Closing note */
+  .tag.rise{background:rgba(178,88,74,.12);color:var(--rise);}
+  .tag.fall{background:rgba(94,140,112,.12);color:var(--fall);}
+  .tag.neutral{background:rgba(192,144,46,.12);color:var(--brass);}
+  .tag.soft{background:rgba(111,122,130,.10);color:var(--ink-soft);}
   .note{
     margin-top:40px;
     padding:22px 24px;
     background:var(--card);
     border:1px solid var(--line);
-    border-left:4px solid var(--fall);
+    border-left:4px solid var(--ink-soft);
     border-radius:8px;
   }
-  .note h4{
-    font-family:'Fraunces', serif;
-    margin:0 0 8px;
-    font-size:17px;
-  }
-  .note p{
-    margin:0;
-    font-size:14px;
-    line-height:1.65;
-    color:var(--ink-soft);
-  }
-
+  .note h4{font-family:'Fraunces', serif;margin:0 0 8px;font-size:17px;}
+  .note p{margin:0;font-size:14px;line-height:1.65;color:var(--ink-soft);}
   .foot{
     margin-top:28px;
     font-size:11px;
     color:var(--ink-soft);
     font-family:'IBM Plex Mono', monospace;
   }
-
   @media (max-width:640px){
     .board{grid-template-columns:1fr;}
     .ticker-col{display:none;}
-    .stats{grid-template-columns:1fr;}
+    .stats{grid-template-columns:repeat(2,1fr);}
   }
 </style>
 </head>
@@ -226,15 +183,15 @@
 
   <header>
     <p class="eyebrow">Pedido K617 / K619 — Daidong Steel</p>
-    <h1>19 dias entre o fechamento e a PI, e uma corrida contra o câmbio</h1>
-    <p class="lede">Linha do tempo do processo, do fechamento do pedido até a liberação da Proforma Invoice (PI) e a janela final de pagamento de hoje.</p>
+    <h1>26 dias de espera pela PI, uma alta de câmbio — e um desfecho ainda em aberto</h1>
+    <p class="lede">Linha do tempo do processo: do fechamento do pedido em 20/05 até a liberação da PI em 09/06 e a situação atual em 15/06.</p>
   </header>
 
   <div class="stats">
     <div class="stat">
       <p class="label">Pedido fechado</p>
       <p class="value">20/05</p>
-      <p class="sub">Câmbio de referência: R$ 5,00</p>
+      <p class="sub">Câmbio ref.: R$ 5,00</p>
     </div>
     <div class="stat">
       <p class="label">PI liberada</p>
@@ -242,101 +199,107 @@
       <p class="sub">20 dias após o fechamento</p>
     </div>
     <div class="stat">
-      <p class="label">Hoje · prazo de pagamento</p>
+      <p class="label">Prazo de pagamento</p>
       <p class="value fall">12/06</p>
-      <p class="sub">Câmbio recua, perto do estudo original</p>
+      <p class="sub">Câmbio recuou neste dia</p>
+    </div>
+    <div class="stat">
+      <p class="label">Hoje</p>
+      <p class="value pending">15/06</p>
+      <p class="sub">Contrato de câmbio pendente</p>
     </div>
   </div>
 
   <div class="board">
     <div class="ticker-col">
-      <svg viewBox="0 0 60 760" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-        <!-- baseline reference -->
+      <svg viewBox="0 0 60 820" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
         <line x1="0" y1="40" x2="60" y2="40" stroke="#DDD4C2" stroke-width="1" stroke-dasharray="2 4"/>
-        <line x1="0" y1="690" x2="60" y2="690" stroke="#DDD4C2" stroke-width="1" stroke-dasharray="2 4"/>
-        <!-- exchange rate path: starts ~R$5,00, climbs through the wait, drops sharply today -->
+        <line x1="0" y1="660" x2="60" y2="660" stroke="#DDD4C2" stroke-width="1" stroke-dasharray="2 4"/>
         <path d="M 30 40
-                 C 30 120, 34 160, 36 220
-                 C 38 290, 42 340, 40 410
-                 C 38 470, 42 520, 44 580
-                 C 46 630, 30 660, 28 690"
+                 C 30 110, 32 160, 34 220
+                 C 36 290, 38 340, 38 410
+                 C 38 470, 40 510, 42 560
+                 C 44 610, 28 640, 26 660
+                 C 26 700, 26 730, 26 760"
               fill="none" stroke="#C0902E" stroke-width="2.5" stroke-linecap="round"/>
-        <!-- markers -->
         <circle cx="30" cy="40" r="4" fill="#C0902E"/>
-        <circle cx="44" cy="580" r="4" fill="#B2584A"/>
-        <circle cx="28" cy="690" r="5" fill="#5E8C70"/>
-        <text x="48" y="44" font-family="IBM Plex Mono, monospace" font-size="10" fill="#6F7A82">R$5,00</text>
-        <text x="48" y="584" font-family="IBM Plex Mono, monospace" font-size="10" fill="#B2584A">alta</text>
-        <text x="48" y="694" font-family="IBM Plex Mono, monospace" font-size="10" fill="#5E8C70">queda</text>
+        <circle cx="42" cy="560" r="4" fill="#B2584A"/>
+        <circle cx="26" cy="660" r="4" fill="#5E8C70"/>
+        <circle cx="26" cy="760" r="4" fill="none" stroke="#6F7A82" stroke-width="2" stroke-dasharray="2 2"/>
+        <text x="46" y="44" font-family="IBM Plex Mono, monospace" font-size="9" fill="#6F7A82">R$5,00</text>
+        <text x="46" y="564" font-family="IBM Plex Mono, monospace" font-size="9" fill="#B2584A">alta</text>
+        <text x="46" y="664" font-family="IBM Plex Mono, monospace" font-size="9" fill="#5E8C70">queda</text>
+        <text x="46" y="764" font-family="IBM Plex Mono, monospace" font-size="9" fill="#6F7A82">aberto</text>
       </svg>
     </div>
 
     <div class="events">
 
-      <div class="event">
-        <p class="date">19 MAI</p>
-        <h3>PI solicitada ao fornecedor</h3>
-        <p>Daidong Steel é fornecedor novo — primeira compra com eles. PI solicitada para dar andamento ao pedido.</p>
-      </div>
-
       <div class="event key">
         <span class="tag neutral">Marco</span>
         <p class="date">20 MAI</p>
         <h3>Pedido fechado a R$ 5,00</h3>
-        <p>Pedido confirmado com o cliente Yago, usando a taxa de referência do dólar em R$ 5,00 no estudo.</p>
+        <p>Pedido K617 (Santana 48) e K619 (Fujimoto 13 SC) confirmados com o cliente. Taxa de referência do dólar utilizada no estudo: R$ 5,00. Após o fechamento, PI solicitada ao fornecedor Daidong Steel — primeira compra com este fornecedor.</p>
       </div>
 
       <div class="event">
         <p class="date">26 MAI</p>
         <h3>Compra em negociação</h3>
-        <p>Time interno reporta que a compra segue em negociação, aguardando a PI solicitada ao fornecedor em 19/05.</p>
+        <p>Time interno reporta que a compra segue em negociação, aguardando retorno do fornecedor com a PI.</p>
       </div>
 
       <div class="event">
         <p class="date">29 MAI</p>
-        <h3>Follow-up de andamento</h3>
-        <p>Cobrança interna pedindo informações sobre o andamento da negociação com o fornecedor.</p>
+        <h3>Follow-up interno</h3>
+        <p>Nova cobrança sobre o andamento da negociação com o fornecedor.</p>
       </div>
 
       <div class="event alert">
         <span class="tag rise">Atraso</span>
         <p class="date">01 JUN</p>
-        <h3>Seguradora dos contratos em feriado</h3>
-        <p>A empresa que monta os contratos da Daidong está em feriado; PI ainda sem previsão de envio.</p>
+        <h3>Fornecedor em feriado, PI sem previsão</h3>
+        <p>O fornecedor Daidong Steel está em feriado; o pedido também será tratado por lá. Novidades da PI esperadas apenas no dia seguinte.</p>
+      </div>
+
+      <div class="event alert">
+        <span class="tag rise">Pressão do cliente</span>
+        <p class="date">início JUN</p>
+        <h3>Cliente sinaliza urgência</h3>
+        <p>Yago (cliente) contata informando que a PI está aguardada há cerca de 10 dias e que precisa se organizar para colocá-la na programação de câmbio. Câmbio já em alta em relação à referência de R$ 5,00.</p>
       </div>
 
       <div class="event alert">
         <span class="tag rise">Cobrança direta</span>
         <p class="date">08–09 JUN</p>
         <h3>Pressão direta ao fornecedor</h3>
-        <p>Cobranças diretas a Bruno (Daidong Steel) pela PI dos pedidos K617 (Santana 48) e K619 (Fujimoto 13 SC). Fornecedor com baixa resposta; Vietnã sem capacidade para atender toda a demanda.</p>
+        <p>Cobranças diretas a Bruno (Daidong Steel) pelos pedidos K617 e K619. Fornecedor com baixa responsividade. Fornecedor de Vietnã mencionado como alternativa, pois a capacidade produtiva não estava suprindo toda a demanda.</p>
       </div>
 
       <div class="event key">
         <span class="tag neutral">Marco</span>
         <p class="date">09 JUN</p>
-        <h3>PI e contrato liberados</h3>
-        <p>PI e contrato finalmente salvos na pasta/drive — 20 dias após o fechamento do pedido.</p>
+        <h3>PI e contrato liberados — 20 dias após o fechamento</h3>
+        <p>PI e contrato finalmente salvos na pasta/drive. PI validada e atualizada conforme confirmação de dados pelo fornecedor, aprovada para câmbio.</p>
       </div>
 
       <div class="event">
         <p class="date">10 JUN</p>
-        <h3>PI validada para câmbio</h3>
-        <p>PI atualizada conforme confirmação de dados do fornecedor e aprovada para câmbio. Segue para envio junto ao contrato para assinatura.</p>
-      </div>
-
-      <div class="event alert">
-        <span class="tag rise">Pressão do cliente</span>
-        <p class="date">~ início JUN</p>
-        <h3>Cliente sinaliza alta do câmbio</h3>
-        <p>Yago (cliente) reporta cerca de 10 dias de espera pela PI e o câmbio em alta, pedindo apoio para se programar.</p>
+        <h3>PI e contrato enviados para assinatura</h3>
+        <p>PI segue para envio ao cliente junto ao contrato para assinatura.</p>
       </div>
 
       <div class="event relief">
-        <span class="tag fall">Hoje</span>
-        <p class="date">12 JUN</p>
-        <h3>Câmbio cai na véspera do prazo</h3>
-        <p>No dia-limite definido para pagamento, o dólar abre em forte queda, performando mais próximo do valor do estudo do que nos dias anteriores — permitindo ao cliente fechar a operação sem grande prejuízo.</p>
+        <span class="tag fall">Prazo de pagamento</span>
+        <p class="date">12 JUN (sexta-feira)</p>
+        <h3>Câmbio recua no dia-limite</h3>
+        <p>No dia definido como prazo para pagamento, o dólar abre em forte queda, performando mais próximo do valor do estudo original do que nos dias anteriores — uma janela favorável ao cliente para fechar o câmbio.</p>
+      </div>
+
+      <div class="event pending">
+        <span class="tag soft">Situação atual</span>
+        <p class="date">15 JUN (hoje)</p>
+        <h3>Contrato de câmbio ainda não enviado</h3>
+        <p>Apesar da janela favorável de câmbio em 12/06, o contrato de câmbio ainda não foi enviado pelo cliente até o momento. Processo segue em aberto.</p>
       </div>
 
     </div>
@@ -344,7 +307,7 @@
 
   <div class="note">
     <h4>Ponto principal</h4>
-    <p>O risco do processo nasceu do intervalo entre o fechamento do pedido (20/05, R$ 5,00) e a liberação da PI (09/06): 20 dias em que o câmbio subiu de forma relevante. A queda do dólar nesta manhã, justamente no prazo-limite de pagamento, foi o que viabilizou o fechamento dentro de uma margem próxima à originalmente prevista no estudo.</p>
+    <p>O risco deste processo surgiu do intervalo de 20 dias entre o fechamento do pedido (20/05, câmbio a R$ 5,00) e a liberação da PI pelo fornecedor (09/06), período em que o câmbio subiu de forma relevante. Em 12/06 — prazo-limite solicitado para pagamento — o dólar recuou e abriu uma janela mais favorável ao cliente. Ainda assim, o contrato de câmbio não foi enviado até a presente data (15/06), e a situação permanece em aberto.</p>
   </div>
 
   <p class="foot">CURVA DE CÂMBIO ILUSTRATIVA — REPRESENTA A TENDÊNCIA RELATADA, NÃO VALORES EXATOS DE COTAÇÃO.</p>
