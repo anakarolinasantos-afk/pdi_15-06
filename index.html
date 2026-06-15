@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Comparativo Aprovado × Realizado</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Syne:wght@400;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.js"></script>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+  :root {
+    --bg: #0d0d0f;
+    --surface: #16161a;
+    --surface2: #1e1e24;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --text: #f0ede8;
+    --muted: #7a7880;
+    --muted2: #a09da8;
+    --approve: #4e9cf5;
+    --approve-dim: rgba(78,156,245,0.12);
+    --real: #f0a04b;
+    --real-dim: rgba(240,160,75,0.12);
+    --green: #56d18c;
+    --green-dim: rgba(86,209,140,0.12);
+    --red: #f26262;
+    --red-dim: rgba(242,98,98,0.12);
+    --accent: #c9b8ff;
+  }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Syne', sans-serif;
+    min-height: 100vh;
+    padding: 48px 32px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  /* HEADER */
+  .header {
+    display: grid;
+    grid-template-columns: 1fr auto;
+    align-items: start;
+    gap: 24px;
+    margin-bottom: 48px;
+    padding-bottom: 32px;
+    border-bottom: 1px solid var(--border2);
+    position: relative;
+  }
+  .header::after {
+    content: '';
+    position: absolute;
+    bottom: -1px; left: 0;
+    width: 80px; height: 2px;
+    background: var(--accent);
+  }
+  .header-eyebrow {
+    font-family: 'DM Mono', monospace;
+    font-size: 11px;
+    letter-spacing: 0.15em;
+    color: var(--muted);
+    text-transform: uppercase;
+    margin-bottom: 10px;
+  }
+  .header-title {
+    font-family: 'DM Serif Display', serif;
+    font-size: clamp(28px, 4vw, 42px);
+    font-weight: 400;
+    line-height: 1.1;
+    color: var(--text);
+  }
+  .header-title em {
+    font-style: italic;
+    color: var(--accent);
+  }
+  .header-badge {
+    background: var(--surface2);
+    border: 1px solid var(--border2);
+    border-radius: 12px;
+    padding: 12px 20px;
+    text-align: right;
+    white-space: nowrap;
+  }
+  .header-badge-label { font-size: 11px; color: var(--muted); letter-spacing: 0.05em; font-family: 'DM Mono', monospace; }
+  .header-badge-val { font-family: 'DM Mono', monospace; font-size: 22px; color: var(--red); margin-top: 4px; }
+
+  /* KPI CARDS */
+  .kpis {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 16px;
+    margin-bottom: 40px;
+  }
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 20px 24px;
+    position: relative;
+    overflow: hidden;
+    transition: border-color 0.2s;
+    animation: fadeUp 0.5s ease both;
+  }
+  .kpi:hover { border-color: var(--border2); }
+  .kpi::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+  }
+  .kpi.blue::before { background: var(--approve); }
+  .kpi.orange::before { background: var(--real); }
+  .kpi.red::before { background: var(--red); }
+  .kpi.green::before { background: var(--green); }
+  .kpi-label { font-size: 11px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; font-family: 'DM Mono', monospace; margin-bottom: 10px; }
+  .kpi-val { font-family: 'DM Mono', monospace; font-size: 24px; font-weight: 500; }
+  .kpi.blue .kpi-val { color: var(--approve); }
+  .kpi.orange .kpi-val { color: var(--real); }
+  .kpi.red .kpi-val { color: var(--red); }
+  .kpi.green .kpi-val { color: var(--green); }
+  .kpi-sub { font-size: 12px; color: var(--muted2); margin-top: 6px; }
+
+  /* TABS */
+  .tabs { display: flex; gap: 4px; margin-bottom: 28px; background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 4px; width: fit-content; }
+  .tab { padding: 8px 20px; border-radius: 8px; border: none; background: transparent; color: var(--muted); font-family: 'Syne', sans-serif; font-size: 13px; cursor: pointer; transition: all 0.2s; }
+  .tab.active { background: var(--surface2); color: var(--text); border: 1px solid var(--border2); }
+
+  /* TABLE */
+  .table-wrap { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; overflow: hidden; margin-bottom: 32px; animation: fadeUp 0.5s 0.1s ease both; }
+  .table-head { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 0; padding: 14px 24px; background: var(--surface2); border-bottom: 1px solid var(--border); font-size: 11px; color: var(--muted); letter-spacing: 0.08em; text-transform: uppercase; font-family: 'DM Mono', monospace; }
+  .table-row { display: grid; grid-template-columns: 2fr 1fr 1fr 1fr 1fr; gap: 0; padding: 16px 24px; border-bottom: 1px solid var(--border); align-items: center; transition: background 0.15s; cursor: default; }
+  .table-row:last-child { border-bottom: none; }
+  .table-row:hover { background: rgba(255,255,255,0.03); }
+  .table-row .cat { font-size: 14px; font-weight: 600; }
+  .table-row .val { font-family: 'DM Mono', monospace; font-size: 13px; color: var(--muted2); text-align: right; }
+  .table-row .val.real { color: var(--text); }
+  .badge { display: inline-flex; align-items: center; justify-content: flex-end; gap: 4px; padding: 3px 8px; border-radius: 6px; font-family: 'DM Mono', monospace; font-size: 12px; font-weight: 500; }
+  .badge.up { background: var(--red-dim); color: var(--red); }
+  .badge.down { background: var(--green-dim); color: var(--green); }
+  .bar-wrap { grid-column: 1 / -1; height: 3px; background: rgba(255,255,255,0.05); border-radius: 2px; margin-top: 8px; overflow: hidden; }
+  .bar-fill { height: 100%; border-radius: 2px; transition: width 1s ease; }
+
+  /* CHARTS GRID */
+  .charts-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
+  @media (max-width: 680px) { .charts-grid { grid-template-columns: 1fr; } }
+  .chart-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 24px; animation: fadeUp 0.5s 0.2s ease both; }
+  .chart-card.full { grid-column: 1 / -1; }
+  .chart-title { font-size: 13px; font-weight: 600; color: var(--muted2); letter-spacing: 0.05em; text-transform: uppercase; margin-bottom: 20px; font-family: 'DM Mono', monospace; }
+
+  /* UNIT SECTION */
+  .unit-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 32px; }
+  @media (max-width: 680px) { .unit-grid { grid-template-columns: 1fr; } }
+  .unit-card { background: var(--surface); border: 1px solid var(--border); border-radius: 16px; padding: 28px; display: flex; flex-direction: column; gap: 8px; }
+  .unit-card-label { font-size: 11px; color: var(--muted); letter-spacing: 0.1em; text-transform: uppercase; font-family: 'DM Mono', monospace; }
+  .unit-card-val { font-family: 'DM Serif Display', serif; font-size: 36px; }
+  .unit-card.blue .unit-card-val { color: var(--approve); }
+  .unit-card.orange .unit-card-val { color: var(--real); }
+  .unit-card-sub { font-size: 12px; color: var(--muted2); }
+  .unit-diff { background: var(--red-dim); border: 1px solid rgba(242,98,98,0.2); border-radius: 16px; padding: 28px; display: flex; align-items: center; justify-content: space-between; gap: 16px; }
+  .unit-diff-label { font-size: 12px; color: var(--muted2); font-family: 'DM Mono', monospace; }
+  .unit-diff-val { font-family: 'DM Serif Display', serif; font-size: 48px; color: var(--red); }
+
+  /* SECTION */
+  .section { display: none; }
+  .section.active { display: block; }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  /* LEGEND */
+  .legend { display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 16px; }
+  .legend-item { display: flex; align-items: center; gap: 6px; font-size: 12px; color: var(--muted2); font-family: 'DM Mono', monospace; }
+  .legend-dot { width: 10px; height: 10px; border-radius: 2px; }
+
+  /* TOOLTIP custom */
+  .tooltip-box { position: fixed; background: var(--surface2); border: 1px solid var(--border2); border-radius: 10px; padding: 10px 14px; font-size: 12px; pointer-events: none; display: none; z-index: 100; font-family: 'DM Mono', monospace; color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="header">
+  <div>
+    <div class="header-eyebrow">Processo de importação — fechamento</div>
+    <h1 class="header-title">Aprovado <em>×</em><br>Realizado</h1>
+  </div>
+  <div class="header-badge">
+    <div class="header-badge-label">Variação total</div>
+    <div class="header-badge-val">+11,94%</div>
+  </div>
+</div>
+
+<div class="kpis">
+  <div class="kpi blue" style="animation-delay:0s">
+    <div class="kpi-label">Total aprovado</div>
+    <div class="kpi-val">R$ 274.973</div>
+    <div class="kpi-sub">Orçamento inicial</div>
+  </div>
+  <div class="kpi orange" style="animation-delay:0.07s">
+    <div class="kpi-label">Total realizado</div>
+    <div class="kpi-val">R$ 307.795</div>
+    <div class="kpi-sub">Custo efetivo</div>
+  </div>
+  <div class="kpi red" style="animation-delay:0.14s">
+    <div class="kpi-label">Diferença</div>
+    <div class="kpi-val">+R$ 32.822</div>
+    <div class="kpi-sub">Acima do orçado</div>
+  </div>
+  <div class="kpi green" style="animation-delay:0.21s">
+    <div class="kpi-label">Total líquido</div>
+    <div class="kpi-val">R$ 258.660</div>
+    <div class="kpi-sub">Após crédito tributário</div>
+  </div>
+</div>
+
+<div class="tabs">
+  <button class="tab active" onclick="showTab('geral')">Visão geral</button>
+  <button class="tab" onclick="showTab('unit')">Custo unitário</button>
+</div>
+
+<!-- TAB GERAL -->
+<div id="tab-geral" class="section active">
+  <div class="table-wrap">
+    <div class="table-head">
+      <span>Categoria</span>
+      <span style="text-align:right">Aprovado</span>
+      <span style="text-align:right">Realizado</span>
+      <span style="text-align:right">Diferença</span>
+      <span style="text-align:right">Variação</span>
+    </div>
+    <!-- rows injected by JS -->
+  </div>
+
+  <div class="charts-grid">
+    <div class="chart-card full">
+      <div class="chart-title">Comparativo por categoria</div>
+      <div class="legend">
+        <span class="legend-item"><span class="legend-dot" style="background:var(--approve)"></span>Aprovado</span>
+        <span class="legend-item"><span class="legend-dot" style="background:var(--real)"></span>Realizado</span>
+      </div>
+      <div style="position:relative;height:300px">
+        <canvas id="barChart" role="img" aria-label="Gráfico de barras comparando aprovado e realizado por categoria"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">Variação % por categoria</div>
+      <div style="position:relative;height:280px">
+        <canvas id="varChart" role="img" aria-label="Variação percentual por categoria"></canvas>
+      </div>
+    </div>
+
+    <div class="chart-card">
+      <div class="chart-title">Composição do realizado</div>
+      <div style="position:relative;height:280px">
+        <canvas id="pieChart" role="img" aria-label="Composição do custo realizado por categoria"></canvas>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- TAB UNIT -->
+<div id="tab-unit" class="section">
+  <div class="unit-grid">
+    <div class="unit-card blue">
+      <div class="unit-card-label">Custo unitário aprovado</div>
+      <div class="unit-card-val">R$ 11.955,37</div>
+      <div class="unit-card-sub">Valor orçado por unidade</div>
+    </div>
+    <div class="unit-card orange">
+      <div class="unit-card-label">Custo unitário realizado</div>
+      <div class="unit-card-val">R$ 13.382,40</div>
+      <div class="unit-card-sub">Custo efetivo por unidade</div>
+    </div>
+  </div>
+  <div class="unit-diff" style="margin-bottom:32px">
+    <div>
+      <div class="unit-diff-label">Diferença unitária</div>
+      <div style="font-size:13px;color:var(--muted2);margin-top:6px;font-family:'DM Mono',monospace">R$ 13.382,40 − R$ 11.955,37</div>
+    </div>
+    <div style="text-align:right">
+      <div class="unit-diff-val">+11,94%</div>
+      <div style="font-family:'DM Mono',monospace;font-size:14px;color:var(--red)">+ R$ 1.427,03 / un.</div>
+    </div>
+  </div>
+
+  <div class="chart-card" style="margin-bottom:32px">
+    <div class="chart-title">Custo unitário: aprovado × realizado</div>
+    <div class="legend">
+      <span class="legend-item"><span class="legend-dot" style="background:var(--approve)"></span>Aprovado R$ 11.955</span>
+      <span class="legend-item"><span class="legend-dot" style="background:var(--real)"></span>Realizado R$ 13.382</span>
+    </div>
+    <div style="position:relative;height:180px">
+      <canvas id="unitChart" role="img" aria-label="Comparativo custo unitário aprovado vs realizado"></canvas>
+    </div>
+  </div>
+
+  <div class="chart-card">
+    <div class="chart-title">Contribuição de cada categoria ao custo unitário realizado</div>
+    <div style="position:relative;height:280px">
+      <canvas id="unitPieChart" role="img" aria-label="Composição do custo unitário realizado"></canvas>
+    </div>
+  </div>
+</div>
+
+<script>
+const cats = ['Produto','Impostos','Frete marítimo','Desp. desembaraço','Seguro','Frete rodoviário'];
+const apr = [168367.36, 68023.12, 14823.80, 11145.51, 1213.69, 11400.00];
+const rea = [188645.21, 74128.61, 11354.03, 8522.27, 760.21, 24384.85];
+const vars = [12.04, 8.98, -23.41, -23.54, -37.36, 113.90];
+
+const fmtBRL = v => 'R$ ' + v.toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2});
+const fmtK = v => 'R$ ' + (v/1000).toFixed(1) + 'k';
+
+// Build table rows
+const tableWrap = document.querySelector('.table-wrap');
+cats.forEach((c, i) => {
+  const diff = rea[i] - apr[i];
+  const isUp = vars[i] >= 0;
+  const pct = Math.abs(rea[i]/apr[i]*100).toFixed(0);
+  const row = document.createElement('div');
+  row.className = 'table-row';
+  row.innerHTML = `
+    <span class="cat">${c}</span>
+    <span class="val">${fmtBRL(apr[i])}</span>
+    <span class="val real">${fmtBRL(rea[i])}</span>
+    <span class="val" style="color:${isUp?'var(--red)':'var(--green)'}">${isUp?'+':''}${fmtBRL(diff)}</span>
+    <span style="text-align:right"><span class="badge ${isUp?'up':'down'}">${isUp?'▲':'▼'} ${Math.abs(vars[i]).toFixed(2)}%</span></span>
+    <div class="bar-wrap" style="grid-column:1/-1">
+      <div class="bar-fill" style="width:0%;background:${isUp?'var(--red)':'var(--green)'}" data-pct="${pct}"></div>
+    </div>
+  `;
+  tableWrap.appendChild(row);
+});
+
+// Animate bars
+setTimeout(() => {
+  document.querySelectorAll('.bar-fill').forEach(b => {
+    b.style.width = Math.min(parseInt(b.dataset.pct), 100) + '%';
+  });
+}, 300);
+
+const gridColor = 'rgba(255,255,255,0.06)';
+const textColor = '#7a7880';
+const fontMono = "'DM Mono', monospace";
+
+// BAR CHART
+new Chart(document.getElementById('barChart'), {
+  type: 'bar',
+  data: {
+    labels: cats,
+    datasets: [
+      { label: 'Aprovado', data: apr, backgroundColor: 'rgba(78,156,245,0.7)', borderRadius: 6, borderSkipped: false },
+      { label: 'Realizado', data: rea, backgroundColor: 'rgba(240,160,75,0.7)', borderRadius: 6, borderSkipped: false }
+    ]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + fmtBRL(ctx.parsed.y) } } },
+    scales: {
+      x: { ticks: { color: textColor, font: { family: fontMono, size: 11 }, autoSkip: false, maxRotation: 25 }, grid: { color: gridColor } },
+      y: { ticks: { color: textColor, font: { family: fontMono, size: 11 }, callback: fmtK }, grid: { color: gridColor } }
+    }
+  }
+});
+
+// VAR CHART
+new Chart(document.getElementById('varChart'), {
+  type: 'bar',
+  data: {
+    labels: cats,
+    datasets: [{ label: 'Variação %', data: vars, backgroundColor: vars.map(v => v >= 0 ? 'rgba(242,98,98,0.7)' : 'rgba(86,209,140,0.7)'), borderRadius: 6 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + ctx.parsed.y.toFixed(2) + '%' } } },
+    scales: {
+      x: { ticks: { color: textColor, font: { family: fontMono, size: 10 }, autoSkip: false, maxRotation: 30 }, grid: { color: gridColor } },
+      y: { ticks: { color: textColor, font: { family: fontMono, size: 11 }, callback: v => v + '%' }, grid: { color: gridColor } }
+    }
+  }
+});
+
+// PIE CHART
+const pieColors = ['#4e9cf5','#f0a04b','#56d18c','#c9b8ff','#f26262','#f5c842'];
+new Chart(document.getElementById('pieChart'), {
+  type: 'doughnut',
+  data: {
+    labels: cats,
+    datasets: [{ data: rea, backgroundColor: pieColors, borderColor: '#16161a', borderWidth: 3, hoverOffset: 8 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { color: textColor, font: { family: fontMono, size: 11 }, padding: 12, boxWidth: 10 } },
+      tooltip: { callbacks: { label: ctx => ' ' + fmtBRL(ctx.parsed) + ' (' + (ctx.parsed/307795.18*100).toFixed(1) + '%)' } }
+    }
+  }
+});
+
+// UNIT BAR
+new Chart(document.getElementById('unitChart'), {
+  type: 'bar',
+  data: {
+    labels: ['Custo unitário'],
+    datasets: [
+      { label: 'Aprovado', data: [11955.37], backgroundColor: 'rgba(78,156,245,0.7)', borderRadius: 8 },
+      { label: 'Realizado', data: [13382.40], backgroundColor: 'rgba(240,160,75,0.7)', borderRadius: 8 }
+    ]
+  },
+  options: {
+    indexAxis: 'y',
+    responsive: true, maintainAspectRatio: false,
+    plugins: { legend: { display: false }, tooltip: { callbacks: { label: ctx => ' ' + fmtBRL(ctx.parsed.x) } } },
+    scales: {
+      x: { ticks: { color: textColor, font: { family: fontMono, size: 11 }, callback: fmtK }, grid: { color: gridColor }, min: 10000 },
+      y: { ticks: { color: textColor, font: { family: fontMono, size: 11 } }, grid: { color: gridColor } }
+    }
+  }
+});
+
+// UNIT PIE
+new Chart(document.getElementById('unitPieChart'), {
+  type: 'doughnut',
+  data: {
+    labels: cats,
+    datasets: [{ data: rea, backgroundColor: pieColors, borderColor: '#16161a', borderWidth: 3, hoverOffset: 8 }]
+  },
+  options: {
+    responsive: true, maintainAspectRatio: false,
+    plugins: {
+      legend: { position: 'bottom', labels: { color: textColor, font: { family: fontMono, size: 11 }, padding: 12, boxWidth: 10 } },
+      tooltip: { callbacks: { label: ctx => ' ' + fmtBRL(ctx.parsed / 307795.18 * 13382.40) + '/un' } }
+    }
+  }
+});
+
+function showTab(tab) {
+  document.querySelectorAll('.section').forEach(s => s.classList.remove('active'));
+  document.querySelectorAll('.tab').forEach(b => b.classList.remove('active'));
+  document.getElementById('tab-' + tab).classList.add('active');
+  event.target.classList.add('active');
+}
+</script>
+</body>
+</html>
